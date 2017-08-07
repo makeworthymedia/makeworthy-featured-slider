@@ -1,13 +1,13 @@
 <?php
 /**
  * @package MW_Featured_Slider
- * @version 1.3
+ * @version 1.5
  */
 /*
 Plugin Name: Makeworthy Featured Slider
 Plugin URI: https://www.makeworthymedia.com/
 Description: Displays rotating slides. Advanced Custom Fields plugin required to hyperlink slides. Uses Slick slider by Ken Wheeler http://kenwheeler.github.io/slick
-Version: 1.4
+Version: 1.5
 Author: Makeworthy Media
 Author URI: https://www.makeworthymedia.com/
 License: GPL2
@@ -132,8 +132,11 @@ class mw_featured_widget extends WP_Widget {
 		$arrows = ( isset( $instance['arrows'] ) ) ? $instance['arrows'] : 'true';
 		$infinite = ( isset( $instance['infinite'] ) ) ? $instance['infinite'] : 'true';
 		$pauseOnHover = ( isset( $instance['pauseOnHover'] ) ) ? $instance['pauseOnHover'] : 'true';
+		$slidesToShow = $instance['slidesToShow'] ? $instance['slidesToShow'] : '1';
+		$slidesToScroll = $instance['slidesToScroll'] ? $instance['slidesToScroll'] : '1';
 		$order = $instance['order'] ? $instance['order'] : 'ASC';
 		$orderby = $instance['orderby'] ? $instance['orderby'] : 'menu_order';
+		$customCode = $instance['customCode'] ? $instance['customCode'] : '';
 		
 	?>
 <script>
@@ -141,13 +144,16 @@ jQuery( document ).ready(function( $ ) {
 	$('#mw-featured-wrapper-<?php echo $this->id; ?>').slick({
 		speed: 500,
 		cssEase: 'linear',
-		fade: true,
+		<?php if ($slidesToShow == 1) : ?>fade: true,<?php endif; ?>
 		adaptiveHeight: <?php echo $adaptiveHeight; ?>,
 		autoplay: <?php echo $autoplay; ?>,
 		autoplaySpeed: <?php echo $autoplaySpeed; ?>,
 		arrows: <?php echo $arrows; ?>,
 		infinite: <?php echo $infinite; ?>,
-		pauseOnHover: <?php echo $pauseOnHover; ?>
+		pauseOnHover: <?php echo $pauseOnHover; ?>,
+		slidesToShow: <?php echo $slidesToShow; ?>,
+		slidesToScroll: <?php echo $slidesToScroll; ?>,
+		<?php echo $customCode;echo "\n"; ?>
 	});
 });
 </script>
@@ -219,8 +225,11 @@ jQuery( document ).ready(function( $ ) {
 		$arrows = ( isset( $instance['arrows'] ) ) ? $instance['arrows'] : 'true';	// Default to true
 		$infinite = ( isset( $instance['infinite'] ) ) ? $instance['infinite'] : 'true';	// Default to true
 		$pauseOnHover = ( isset( $instance['pauseOnHover'] ) ) ? $instance['pauseOnHover'] : 'true';	// Default to true
+		$slidesToShow = $instance['slidesToShow'] ? $instance['slidesToShow'] : '1';	// Default to 1
+		$slidesToScroll = $instance['slidesToScroll'] ? $instance['slidesToScroll'] : '1';	// Default to 1
 		$order = $instance['order'] ? $instance['order'] : 'ASC';	// Default to ASC
 		$orderby = $instance['orderby'] ? $instance['orderby'] : 'menu_order';	// Default to menu_order
+		$customCode = $instance['customCode'] ? $instance['customCode'] : '';	// Default to nothing
 
 		// PART 2-3: Display the fields
      ?>
@@ -302,7 +311,25 @@ jQuery( document ).ready(function( $ ) {
 			<option value='true'<?php echo ($pauseOnHover=='true')?'selected':''; ?>>On</option> 
 		</select>                
 	</p>
-
+	
+	<!-- Widget slidesToShow field START -->
+	<p>
+		<label for="<?php echo $this->get_field_id('slidesToShow'); ?>">Slides to show (default: 1): 
+		<input class="widefat" id="<?php echo $this->get_field_id('slidesToShow'); ?>"  type="text"
+			name="<?php echo $this->get_field_name('slidesToShow'); ?>" 
+			value="<?php echo esc_attr($slidesToShow); ?>" />
+		</label>
+	</p>
+	
+	<!-- Widget slidesToScroll field START -->
+	<p>
+		<label for="<?php echo $this->get_field_id('slidesToScroll'); ?>">Slides to scroll (default: 1): 
+		<input class="widefat" id="<?php echo $this->get_field_id('slidesToScroll'); ?>"  type="text"
+			name="<?php echo $this->get_field_name('slidesToScroll'); ?>" 
+			value="<?php echo esc_attr($slidesToScroll); ?>" />
+		</label>
+	</p>
+	
 	<!-- Widget order field START -->
 	<p>
 		<label for="<?php echo $this->get_field_id('order'); ?>">Order: 
@@ -323,6 +350,13 @@ jQuery( document ).ready(function( $ ) {
 			<option value='title'<?php echo ($orderby=='title')?'selected':''; ?>>Title</option> 
 		</select>                
 	</p>
+	
+	<!-- Widget customCode field START -->
+	<p>
+		<label for="<?php echo $this->get_field_id('customCode'); ?>">Custom code: 
+		<textarea class="widefat" id="<?php echo $this->get_field_id('customCode'); ?>"	name="<?php echo $this->get_field_name('customCode'); ?>" rows="6"><?php echo esc_attr($customCode); ?></textarea>
+		</label>
+	</p>
 
 	<?php 
 	}
@@ -338,8 +372,11 @@ jQuery( document ).ready(function( $ ) {
 		$instance['arrows'] = ( ! empty( $new_instance['arrows'] ) ) ? strip_tags( $new_instance['arrows'] ) : '';
 		$instance['infinite'] = ( ! empty( $new_instance['infinite'] ) ) ? strip_tags( $new_instance['infinite'] ) : '';
 		$instance['pauseOnHover'] = ( ! empty( $new_instance['pauseOnHover'] ) ) ? strip_tags( $new_instance['pauseOnHover'] ) : '';
+		$instance['slidesToShow'] = ( ! empty( $new_instance['slidesToShow'] ) ) ? strip_tags( $new_instance['slidesToShow'] ) : '';
+		$instance['slidesToScroll'] = ( ! empty( $new_instance['slidesToScroll'] ) ) ? strip_tags( $new_instance['slidesToScroll'] ) : '';
 		$instance['order'] = ( ! empty( $new_instance['order'] ) ) ? strip_tags( $new_instance['order'] ) : '';
 		$instance['orderby'] = ( ! empty( $new_instance['orderby'] ) ) ? strip_tags( $new_instance['orderby'] ) : '';
+		$instance['customCode'] = ( ! empty( $new_instance['customCode'] ) ) ? strip_tags( $new_instance['customCode'] ) : '';
 		return $instance;
 	}
 } // Class mw_quote_widget ends here
