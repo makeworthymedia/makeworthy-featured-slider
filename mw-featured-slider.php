@@ -130,6 +130,7 @@ class mw_featured_widget extends WP_Widget {
 		$autoplay = ( isset( $instance['autoplay'] ) ) ? $instance['autoplay'] : 'false';
 		$autoplaySpeed = $instance['autoplaySpeed'] ? $instance['autoplaySpeed'] : '3000';
 		$arrows = ( isset( $instance['arrows'] ) ) ? $instance['arrows'] : 'true';
+		$dots = ( isset( $instance['dots'] ) ) ? $instance['dots'] : 'false';
 		$infinite = ( isset( $instance['infinite'] ) ) ? $instance['infinite'] : 'true';
 		$pauseOnHover = ( isset( $instance['pauseOnHover'] ) ) ? $instance['pauseOnHover'] : 'true';
 		$slidesToShow = $instance['slidesToShow'] ? $instance['slidesToShow'] : '1';
@@ -149,6 +150,7 @@ jQuery( document ).ready(function( $ ) {
 		autoplay: <?php echo $autoplay; ?>,
 		autoplaySpeed: <?php echo $autoplaySpeed; ?>,
 		arrows: <?php echo $arrows; ?>,
+		dots: <?php echo $dots; ?>,
 		infinite: <?php echo $infinite; ?>,
 		pauseOnHover: <?php echo $pauseOnHover; ?>,
 		slidesToShow: <?php echo $slidesToShow; ?>,
@@ -176,7 +178,9 @@ jQuery( document ).ready(function( $ ) {
 			$count = 1;
 			
 			echo '<div class="mw-featured-wrapper" id="mw-featured-wrapper-'. $this->id . '">';
-			while ( $the_query->have_posts() ) : $the_query->the_post(); 		
+			while ( $the_query->have_posts() ) : $the_query->the_post();
+				$class = '';
+			
 				if (function_exists('get_field')) {
 					if ($link = get_field('slide_link')) {
 						echo '<a href="' . $link . '">';
@@ -223,6 +227,7 @@ jQuery( document ).ready(function( $ ) {
 		$autoplay = ( isset( $instance['autoplay'] ) ) ? $instance['autoplay'] : 'false';	// Default to false
 		$autoplaySpeed = $instance['autoplaySpeed'] ? $instance['autoplaySpeed'] : '3000';	// Default to 3000
 		$arrows = ( isset( $instance['arrows'] ) ) ? $instance['arrows'] : 'true';	// Default to true
+		$dots = ( isset( $instance['dots'] ) ) ? $instance['dots'] : 'false';	// Default to true
 		$infinite = ( isset( $instance['infinite'] ) ) ? $instance['infinite'] : 'true';	// Default to true
 		$pauseOnHover = ( isset( $instance['pauseOnHover'] ) ) ? $instance['pauseOnHover'] : 'true';	// Default to true
 		$slidesToShow = $instance['slidesToShow'] ? $instance['slidesToShow'] : '1';	// Default to 1
@@ -291,6 +296,17 @@ jQuery( document ).ready(function( $ ) {
 			<option value='true'<?php echo ($arrows=='true')?'selected':''; ?>>On</option> 
 		</select>                
 	</p>
+	
+	<!-- Widget dots field START -->
+	<p>
+		<label for="<?php echo $this->get_field_id('dots'); ?>">Dots: 
+		<select class='widefat' id="<?php echo $this->get_field_id('dots'); ?>"
+		name="<?php echo $this->get_field_name('dots'); ?>" type="text">
+			<option value='false'<?php echo ($dots=='false')?'selected':''; ?>>Off</option>
+			<option value='true'<?php echo ($dots=='true')?'selected':''; ?>>On</option> 
+		</select>                
+	</p>
+
 	
 	<!-- Widget Infinite field START -->
 	<p>
@@ -370,6 +386,7 @@ jQuery( document ).ready(function( $ ) {
 		$instance['autoplay'] = ( ! empty( $new_instance['autoplay'] ) ) ? strip_tags( $new_instance['autoplay'] ) : '';
 		$instance['autoplaySpeed'] = ( ! empty( $new_instance['autoplaySpeed'] ) ) ? strip_tags( $new_instance['autoplaySpeed'] ) : '';
 		$instance['arrows'] = ( ! empty( $new_instance['arrows'] ) ) ? strip_tags( $new_instance['arrows'] ) : '';
+		$instance['dots'] = ( ! empty( $new_instance['dots'] ) ) ? strip_tags( $new_instance['dots'] ) : '';
 		$instance['infinite'] = ( ! empty( $new_instance['infinite'] ) ) ? strip_tags( $new_instance['infinite'] ) : '';
 		$instance['pauseOnHover'] = ( ! empty( $new_instance['pauseOnHover'] ) ) ? strip_tags( $new_instance['pauseOnHover'] ) : '';
 		$instance['slidesToShow'] = ( ! empty( $new_instance['slidesToShow'] ) ) ? strip_tags( $new_instance['slidesToShow'] ) : '';
