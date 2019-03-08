@@ -1,13 +1,13 @@
 <?php
 /**
  * @package MW_Featured_Slider
- * @version 1.5
+ * @version 1.6
  */
 /*
 Plugin Name: Makeworthy Featured Slider
 Plugin URI: https://www.makeworthymedia.com/
 Description: Displays rotating slides. Advanced Custom Fields plugin required to hyperlink slides. Uses Slick slider by Ken Wheeler http://kenwheeler.github.io/slick
-Version: 1.5
+Version: 1.6
 Author: Makeworthy Media
 Author URI: https://www.makeworthymedia.com/
 License: GPL2
@@ -41,9 +41,9 @@ if (function_exists('register_field_group')) {
 // Add custom script to footer
 add_action( 'wp_enqueue_scripts', 'mwfs_featured_enqueued_assets' );
 function mwfs_featured_enqueued_assets() {
-	wp_enqueue_script('slick-js', plugin_dir_url( __FILE__ ) . 'slick/slick.min.js', array(), '1.5.9', true );
-	wp_enqueue_style( 'slick', plugin_dir_url( __FILE__ ) . 'slick/slick.css', '', '1.5.9' );
-	wp_enqueue_style( 'slick-theme', plugin_dir_url( __FILE__ ) . 'slick/slick-theme.css', '', '1.5.9' );
+	wp_enqueue_script('slick-js', plugin_dir_url( __FILE__ ) . 'slick-1.8.1/slick.min.js', array(), '1.5.9', true );
+	wp_enqueue_style( 'slick', plugin_dir_url( __FILE__ ) . 'slick-1.8.1/slick.css', '', '1.5.9' );
+	wp_enqueue_style( 'slick-theme', plugin_dir_url( __FILE__ ) . 'slick-1.8.1/slick-theme.css', '', '1.5.9' );
 }
 
 //* Add stuff to <head>
@@ -137,6 +137,7 @@ class mw_featured_widget extends WP_Widget {
 		$slidesToScroll = $instance['slidesToScroll'] ? $instance['slidesToScroll'] : '1';
 		$order = $instance['order'] ? $instance['order'] : 'ASC';
 		$orderby = $instance['orderby'] ? $instance['orderby'] : 'menu_order';
+		$linktarget = ( isset( $instance['linktarget'] ) ) ? $instance['linktarget'] : 'false';
 		$customCode = $instance['customCode'] ? $instance['customCode'] : '';
 		
 	?>
@@ -183,7 +184,12 @@ jQuery( document ).ready(function( $ ) {
 			
 				if (function_exists('get_field')) {
 					if ($link = get_field('slide_link')) {
-						echo '<a href="' . $link . '">';
+						
+						echo '<a href="' . $link . '"';
+						if ($linktarget=='true') {
+							echo ' target="_blank"';
+						}
+						echo ' >';
 					}
 				} 
 				if (function_exists('get_field')) {
@@ -234,6 +240,7 @@ jQuery( document ).ready(function( $ ) {
 		$slidesToScroll = $instance['slidesToScroll'] ? $instance['slidesToScroll'] : '1';	// Default to 1
 		$order = $instance['order'] ? $instance['order'] : 'ASC';	// Default to ASC
 		$orderby = $instance['orderby'] ? $instance['orderby'] : 'menu_order';	// Default to menu_order
+		$linktarget = ( isset( $instance['linktarget'] ) ) ? $instance['linktarget'] : 'false';	// Default to false
 		$customCode = $instance['customCode'] ? $instance['customCode'] : '';	// Default to nothing
 
 		// PART 2-3: Display the fields
@@ -367,6 +374,17 @@ jQuery( document ).ready(function( $ ) {
 		</select>                
 	</p>
 	
+	<!-- Widget linktarget field START -->
+	<p>
+		<label for="<?php echo $this->get_field_id('linktarget'); ?>">Open links in a new window: 
+		<select class='widefat' id="<?php echo $this->get_field_id('linktarget'); ?>"
+		name="<?php echo $this->get_field_name('linktarget'); ?>" type="text">
+			<option value='false'<?php echo ($linktarget=='false')?'selected':''; ?>>Off</option>
+			<option value='true'<?php echo ($linktarget=='true')?'selected':''; ?>>On</option> 
+		</select>                
+	</p>
+
+	
 	<!-- Widget customCode field START -->
 	<p>
 		<label for="<?php echo $this->get_field_id('customCode'); ?>">Custom code: 
@@ -393,6 +411,7 @@ jQuery( document ).ready(function( $ ) {
 		$instance['slidesToScroll'] = ( ! empty( $new_instance['slidesToScroll'] ) ) ? strip_tags( $new_instance['slidesToScroll'] ) : '';
 		$instance['order'] = ( ! empty( $new_instance['order'] ) ) ? strip_tags( $new_instance['order'] ) : '';
 		$instance['orderby'] = ( ! empty( $new_instance['orderby'] ) ) ? strip_tags( $new_instance['orderby'] ) : '';
+		$instance['linktarget'] = ( ! empty( $new_instance['linktarget'] ) ) ? strip_tags( $new_instance['linktarget'] ) : '';
 		$instance['customCode'] = ( ! empty( $new_instance['customCode'] ) ) ? strip_tags( $new_instance['customCode'] ) : '';
 		return $instance;
 	}
